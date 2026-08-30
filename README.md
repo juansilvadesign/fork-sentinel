@@ -10,6 +10,12 @@ and they break quietly: upstream lands 26 commits, and you find out during a mer
 
 `fork-sentinel` separates the two and reports only the ones that can hurt you.
 
+<p align="center">
+  <img src="assets/showcase/fork-sentinel-terminal.webp"
+       alt="Terminal running fork-sentinel: the command is typed, then a table builds row by row showing each fork's ahead and behind counts, with DIVERGED rows in red, ending on 9 forks diverged and 52 not shown."
+       width="900">
+</p>
+
 ```
 fork-sentinel · juansilvadesign · 69 of 69 forks scanned
 
@@ -74,6 +80,12 @@ fork-sentinel --no-branch-scan   # faster, at the cost of under-reporting
 Rows are sorted riskiest-first: diverged (by how far behind), then clean, then the rest.
 
 ## Three things that are less obvious than they look
+
+<p align="center">
+  <img src="assets/showcase/fork-sentinel-funnel.webp"
+       alt="69 fork tiles fill the screen, 52 fade back to leave 17 green tiles that carry your own commits, then 9 turn red as diverged, naming caveman at 309 behind, Sink at 264 and ai-website-cloner-template at 26."
+       width="900">
+</p>
 
 **1. `ahead > 0` is the load-bearing filter.** On a real account the fork list is mostly
 bookmarks — 46 of 69 in the run above. Without this filter the report is unreadable, and a

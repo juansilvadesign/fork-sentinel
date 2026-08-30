@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en" data-resolution="landscape">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <title>fork-sentinel — the run</title>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+
+    @font-face{font-family:"InterVar";src:url("assets/fonts/inter-var.woff2")format("woff2");font-weight:100 900;font-display:block}
+    @font-face{font-family:"JBMono";src:url("assets/fonts/jetbrains-mono-var.woff2")format("woff2");font-weight:100 800;font-display:block}
+
+      *{margin:0;padding:0;box-sizing:border-box}
+      :root{
+  --bg:#0a0c10; --surface:#11151c; --surface2:#161b24; --line:#222936;
+  --text:#e6e9ef; --muted:#8b94a7; --accent:#3fb950; --danger:#f85149; --amber:#d29922;
+}
+      html,body{width:1920px;height:1080px;overflow:hidden;background:var(--bg)}
+      body{font-family:"InterVar",sans-serif;color:var(--text);
+        background-image:radial-gradient(1400px 700px at 50% -240px,rgba(63,185,80,.10),transparent 70%)}
+      .clip{position:absolute;inset:0}
+      .mono{font-family:"JBMono",monospace;font-variant-ligatures:none}
+      .c-dim{color:#808a9a} .c-red{color:var(--danger)} .c-green{color:var(--accent)}
+      .c-white{color:#fff} .c-muted{color:var(--muted)}
+      #win{position:absolute;left:50%;top:52%;transform:translate(-50%,-50%);
+        width:1680px;height:824px;background:#070910;border:1px solid var(--line);
+        border-radius:16px;overflow:hidden;box-shadow:0 40px 120px -40px #000;
+        display:flex;flex-direction:column}
+      #bar{display:flex;align-items:center;gap:9px;padding:16px 20px;background:var(--surface2);
+        border-bottom:1px solid var(--line)}
+      #bar i{width:13px;height:13px;border-radius:50%;background:#2d3542}
+      #bar span{margin-left:10px;font-size:17px;color:var(--muted)}
+      #pane{position:relative;flex:1;min-height:0}
+      .tline{position:absolute;white-space:pre;font-size:23px;line-height:1.5;letter-spacing:0}
+      #typed{display:inline-block;overflow:hidden;white-space:nowrap;
+        vertical-align:bottom;width:0}
+      #caret{color:var(--accent)}
+      #scene-end{opacity:0}
+      #endcard{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;
+        justify-content:center;gap:22px;background:var(--bg)}
+      #mark{font-size:96px;font-weight:800;letter-spacing:-.035em}
+      #tag{font-size:38px;color:#c3cad6}
+      #url{font-size:30px;color:var(--accent);margin-top:8px}
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="terminal" data-start="0" data-duration="14"
+         data-width="1920" data-height="1080" data-fps="30">
+      <div class="clip" id="scene-term" data-start="0" data-duration="14">
+        <div id="win">
+          <div id="bar"><i></i><i></i><i></i><span class="mono">fork-sentinel</span></div>
+          <div id="pane">
+        <div class="tline mono c-dim" id="l0" style="left:56px;top:90px"><span class="c-green">$</span> <span id="typed">fork-sentinel</span><span id="caret">&#9608;</span></div>
+        <div class="tline mono " id="l1" style="left:56px;top:128px"><span class="c-white">fork-sentinel</span> <span class="c-dim">&#183; juansilvadesign &#183; 69 of 69 forks scanned</span></div>
+        <div class="tline mono c-dim" id="l2" style="left:56px;top:166px">&nbsp;</div>
+        <div class="tline mono c-dim" id="l3" style="left:56px;top:204px">FORK                        UPSTREAM                               AHEAD  BEHIND  STATUS    OUTBOUND PRS</div>
+        <div class="tline mono " id="l4" style="left:56px;top:242px">caveman                     JuliusBrussee/caveman                  3      309     <span class="c-red">DIVERGED</span>  <span class="c-muted">1 closed</span></div>
+        <div class="tline mono " id="l5" style="left:56px;top:280px">Sink                        miantiao-me/Sink                       2      264     <span class="c-red">DIVERGED</span>  <span class="c-muted">—</span></div>
+        <div class="tline mono " id="l6" style="left:56px;top:318px">moemail                     beilunyang/moemail                     1      70      <span class="c-red">DIVERGED</span>  <span class="c-muted">—</span></div>
+        <div class="tline mono " id="l7" style="left:56px;top:356px">ai-website-cloner-template  JCodesMore/ai-website-cloner-template  47     26      <span class="c-red">DIVERGED</span>  <span class="c-muted">—</span></div>
+        <div class="tline mono " id="l8" style="left:56px;top:394px">ZeroDelay                   joaogfc/ZeroDelay                      6      13      <span class="c-red">DIVERGED</span>  <span class="c-muted">2 open · 4 merged</span></div>
+        <div class="tline mono c-dim" id="l9" style="left:56px;top:432px">&nbsp;&nbsp;&nbsp;&nbsp;-&gt; work is on feat/community-suite, not main</div>
+        <div class="tline mono " id="l10" style="left:56px;top:470px">claude-switch               Abhishek21k/claude-switch              15     9       <span class="c-red">DIVERGED</span>  <span class="c-muted">4 merged</span></div>
+        <div class="tline mono " id="l11" style="left:56px;top:508px">cursor-talk-to-figma-mcp    grab/cursor-talk-to-figma-mcp          232    0       <span class="c-green">clean   </span>  <span class="c-muted">2 open · 1 merged</span></div>
+        <div class="tline mono c-dim" id="l12" style="left:56px;top:546px">&nbsp;</div>
+        <div class="tline mono c-white" id="l13" style="left:56px;top:584px">9 forks diverged &#8212; upstream moved under patches you wrote.</div>
+        <div class="tline mono c-dim" id="l14" style="left:56px;top:622px">52 forks not shown: 5 upstream deleted &#183; 1 unrelated history &#183; 46 never patched</div>
+          </div>
+        </div>
+      </div>
+      <div class="clip" id="scene-end" data-start="11.4" data-duration="2.6">
+        <div id="endcard">
+          <div id="mark">&#9672; fork-sentinel</div>
+          <div id="tag">69 forks in. 9 that can actually break you, out.</div>
+          <div id="url" class="mono">juansilvadesign.github.io/fork-sentinel</div>
+        </div>
+      </div>
+    </div>
+    <script>
+      window.__timelines = window.__timelines || {};
+      const tl = gsap.timeline({ paused: true });
+      tl.fromTo("#win",{opacity:0,scale:.965},{opacity:1,scale:1,duration:.55,ease:"power2.out"},0);
+      tl.fromTo("#typed",{width:0},{width:"13ch",duration:1.15,ease:"steps(13)"},0.75);
+      tl.to("#caret",{opacity:0,duration:.01,repeat:7,yoyo:true,repeatDelay:.38,ease:"none"},0.1);
+      tl.to("#caret",{opacity:0,duration:.2},2.35);
+      tl.fromTo("#l0",{opacity:0,x:-14},{opacity:1,x:0,duration:.28,ease:"power2.out"},0.55);
+      tl.fromTo("#l1",{opacity:0,x:-14},{opacity:1,x:0,duration:.28,ease:"power2.out"},2.55);
+      tl.fromTo("#l2",{opacity:0,x:-14},{opacity:1,x:0,duration:.28,ease:"power2.out"},2.60);
+      tl.fromTo("#l3",{opacity:0,x:-14},{opacity:1,x:0,duration:.28,ease:"power2.out"},3.05);
+      tl.fromTo("#l4",{opacity:0,x:-14},{opacity:1,x:0,duration:.28,ease:"power2.out"},3.55);
+      tl.fromTo("#l5",{opacity:0,x:-14},{opacity:1,x:0,duration:.28,ease:"power2.out"},4.07);
+      tl.fromTo("#l6",{opacity:0,x:-14},{opacity:1,x:0,duration:.28,ease:"power2.out"},4.59);
+      tl.fromTo("#l7",{opacity:0,x:-14},{opacity:1,x:0,duration:.28,ease:"power2.out"},5.11);
+      tl.fromTo("#l8",{opacity:0,x:-14},{opacity:1,x:0,duration:.28,ease:"power2.out"},5.63);
+      tl.fromTo("#l9",{opacity:0,x:-14},{opacity:1,x:0,duration:.28,ease:"power2.out"},6.15);
+      tl.fromTo("#l10",{opacity:0,x:-14},{opacity:1,x:0,duration:.28,ease:"power2.out"},6.57);
+      tl.fromTo("#l11",{opacity:0,x:-14},{opacity:1,x:0,duration:.28,ease:"power2.out"},7.09);
+      tl.fromTo("#l12",{opacity:0,x:-14},{opacity:1,x:0,duration:.28,ease:"power2.out"},7.86);
+      tl.fromTo("#l13",{opacity:0,x:-14},{opacity:1,x:0,duration:.28,ease:"power2.out"},7.86);
+      tl.fromTo("#l14",{opacity:0,x:-14},{opacity:1,x:0,duration:.28,ease:"power2.out"},8.48);
+      tl.to("#win",{opacity:0,duration:.4,ease:"power2.inOut"},11.2);
+      tl.to("#scene-end",{opacity:1,duration:.5,ease:"power2.out"},11.4);
+      tl.fromTo("#mark",{opacity:0,y:22},{opacity:1,y:0,duration:.55,ease:"power3.out"},11.55);
+      tl.fromTo("#tag",{opacity:0,y:16},{opacity:1,y:0,duration:.5,ease:"power3.out"},11.78);
+      tl.fromTo("#url",{opacity:0},{opacity:1,duration:.5},12.0);
+      window.__timelines["terminal"] = tl;
+    </script>
+  </body>
+</html>
