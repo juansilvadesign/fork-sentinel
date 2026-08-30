@@ -1,0 +1,15 @@
+{
+  "name": "fork-sentinel",
+  "version": "0.1.0",
+  "description": "Find the forks you actually maintain, and tell you when upstream moved underneath them.",
+  "type": "module",
+  "license": "MIT",
+  "bin": { "fork-sentinel": "src/cli.ts" },
+  "scripts": {
+    "start": "bun run src/cli.ts",
+    "test": "bun test",
+    "typecheck": "tsc --noEmit"
+  },
+  "engines": { "bun": ">=1.0.0" },
+  "devDependencies": { "typescript": "^5.6.0", "@types/bun": "latest" }
+}
