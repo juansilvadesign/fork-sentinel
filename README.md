@@ -2,6 +2,8 @@
 
 Find the forks you actually maintain, and tell you when upstream moved underneath them.
 
+**[juansilvadesign.github.io/fork-sentinel](https://juansilvadesign.github.io/fork-sentinel/)**
+
 A GitHub account collects forks. Most are bookmarks — you forked to read the code, or to
 star it sideways, and never wrote a line. A few carry real patches. Only those can break,
 and they break quietly: upstream lands 26 commits, and you find out during a merge.
@@ -32,9 +34,12 @@ cursor-talk-to-figma-mcp    grab/cursor-talk-to-figma-mcp          232    0     
 Requires [Bun](https://bun.sh) 1.0+.
 
 ```sh
-git clone https://github.com/<you>/fork-sentinel
-cd fork-sentinel
-bun install
+# run it straight from the repo
+bunx --bun github:juansilvadesign/fork-sentinel
+
+# or clone it
+git clone https://github.com/juansilvadesign/fork-sentinel
+cd fork-sentinel && bun install
 bun run src/cli.ts
 ```
 
