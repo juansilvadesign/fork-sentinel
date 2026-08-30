@@ -1,0 +1,475 @@
+---
+const base = import.meta.env.BASE_URL.replace(/\/$/, "");
+const repo = "https://github.com/juansilvadesign/fork-sentinel";
+const title = "fork-sentinel — find the forks you actually maintain";
+const description =
+  "A zero-dependency CLI that separates the forks carrying your own commits from the bookmark majority, then tells you when upstream moved underneath them.";
+const canonical = "https://juansilvadesign.github.io/fork-sentinel/";
+
+const stats = [
+  { n: "69", label: "forks on a real account", tone: "muted" },
+  { n: "17", label: "carry commits of your own", tone: "accent" },
+  { n: "9", label: "diverged — upstream moved", tone: "danger" },
+];
+
+type Row = {
+  fork: string; upstream: string; ahead: string; behind: string;
+  status: "DIVERGED" | "clean"; prs: string; note?: string;
+};
+
+const rows: Row[] = [
+  { fork: "caveman", upstream: "JuliusBrussee/caveman", ahead: "3", behind: "309", status: "DIVERGED", prs: "1 closed" },
+  { fork: "Sink", upstream: "miantiao-me/Sink", ahead: "2", behind: "264", status: "DIVERGED", prs: "—" },
+  { fork: "moemail", upstream: "beilunyang/moemail", ahead: "1", behind: "70", status: "DIVERGED", prs: "—" },
+  { fork: "ai-website-cloner-template", upstream: "JCodesMore/ai-website-cloner-template", ahead: "47", behind: "26", status: "DIVERGED", prs: "—" },
+  { fork: "ZeroDelay", upstream: "joaogfc/ZeroDelay", ahead: "6", behind: "13", status: "DIVERGED", prs: "2 open · 4 merged", note: "work is on feat/community-suite, not main" },
+  { fork: "claude-switch", upstream: "Abhishek21k/claude-switch", ahead: "15", behind: "9", status: "DIVERGED", prs: "4 merged" },
+  { fork: "cursor-talk-to-figma-mcp", upstream: "grab/cursor-talk-to-figma-mcp", ahead: "232", behind: "0", status: "clean", prs: "2 open · 1 merged" },
+];
+
+const headers = ["FORK", "UPSTREAM", "AHEAD", "BEHIND", "STATUS", "OUTBOUND PRS"];
+const cols = [
+  Math.max(headers[0].length, ...rows.map((r) => r.fork.length)),
+  Math.max(headers[1].length, ...rows.map((r) => r.upstream.length)),
+  Math.max(headers[2].length, ...rows.map((r) => r.ahead.length)),
+  Math.max(headers[3].length, ...rows.map((r) => r.behind.length)),
+  Math.max(headers[4].length, ...rows.map((r) => r.status.length)),
+];
+
+// Rendered as one exact string: a .map() inside <pre> leaks JSX indentation and
+// blank lines into the output, which silently destroys column alignment.
+const esc = (v: string) => v.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+const pad = (v: string, n: number) => esc(v.padEnd(n));
+
+const termHtml = [
+  '<span class="c-dim">$</span> fork-sentinel',
+  '<span class="c-bold">fork-sentinel</span> <span class="c-dim">\u00b7 juansilvadesign \u00b7 69 of 69 forks scanned</span>',
+  "",
+  `<span class="c-dim">${pad(headers[0], cols[0])}  ${pad(headers[1], cols[1])}  ${pad(headers[2], cols[2])}  ${pad(headers[3], cols[3])}  ${pad(headers[4], cols[4])}  ${esc(headers[5])}</span>`,
+  ...rows.flatMap((r) => {
+    const tone = r.status === "DIVERGED" ? "c-red" : "c-green";
+    const line = `${pad(r.fork, cols[0])}  ${pad(r.upstream, cols[1])}  ${pad(r.ahead, cols[2])}  ${pad(r.behind, cols[3])}  <span class="${tone}">${pad(r.status, cols[4])}</span>  ${esc(r.prs)}`;
+    return r.note ? [line, `<span class="c-dim">    \u21b3 ${esc(r.note)}</span>`] : [line];
+  }),
+  "",
+  '<span class="c-bold">9 forks diverged \u2014 upstream moved under patches you wrote.</span>',
+  '<span class="c-dim">52 forks not shown: 5 upstream deleted \u00b7 1 unrelated history \u00b7 46 never patched (--all to list)</span>',
+].join("\n");
+
+const statuses = [
+  { name: "DIVERGED", desc: "You patched it and upstream moved. The only state that can become a merge conflict.", shown: "yes", tone: "danger" },
+  { name: "clean", desc: "You patched it, upstream has not moved. Nothing to do.", shown: "yes", tone: "accent" },
+  { name: "unknown", desc: "The comparison genuinely failed. A tool fault, not a verdict — so it stays visible.", shown: "yes", tone: "amber" },
+  { name: "bookmark", desc: "No commits of your own. Not a fork you maintain.", shown: "--all", tone: "muted" },
+  { name: "orphaned", desc: "Upstream no longer exists.", shown: "--all", tone: "muted" },
+  { name: "unrelated", desc: "Upstream rewrote history; no shared commit. Never comparable.", shown: "--all", tone: "muted" },
+];
+
+const schema = {
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  name: "fork-sentinel",
+  applicationCategory: "DeveloperApplication",
+  operatingSystem: "macOS, Linux, Windows",
+  description,
+  url: canonical,
+  codeRepository: repo,
+  license: "https://opensource.org/licenses/MIT",
+  offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
+};
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" href={`${base}/favicon.svg`} type="image/svg+xml" />
+    <meta name="color-scheme" content="dark" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={`${canonical}og.png`} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={`${canonical}og.png`} />
+    <script type="application/ld+json" set:html={JSON.stringify(schema)} />
+  </head>
+
+  <body>
+    <a class="skip" href="#main">Skip to content</a>
+
+    <header class="nav">
+      <span class="brand"><span class="brand-mark">◈</span> fork-sentinel</span>
+      <nav>
+        <a href="#output">Output</a>
+        <a href="#findings">Findings</a>
+        <a href="#install">Install</a>
+        <a class="cta" href={repo} rel="noopener">GitHub</a>
+      </nav>
+    </header>
+
+    <main id="main">
+      <section class="hero">
+        <p class="eyebrow">Open source · MIT · zero runtime dependencies</p>
+        <h1>Find the forks you <em>actually</em> maintain.</h1>
+        <p class="lede">
+          A GitHub account collects forks. Most are bookmarks — you forked to read the code and
+          never wrote a line. A few carry real patches, and those are the ones that break: upstream
+          lands 26 commits and you find out during a merge.
+        </p>
+        <p class="lede">fork-sentinel separates the two and reports only the ones that can hurt you.</p>
+
+        <div class="cmd">
+          <code>bunx --bun github:juansilvadesign/fork-sentinel</code>
+          <button class="copy" data-copy="bunx --bun github:juansilvadesign/fork-sentinel" type="button">Copy</button>
+        </div>
+
+        <div class="actions">
+          <a class="btn primary" href={repo} rel="noopener">View on GitHub</a>
+          <a class="btn" href="#output">See real output</a>
+        </div>
+      </section>
+
+      <section class="stats" aria-label="Signal to noise on a real account">
+        {stats.map((s) => (
+          <div class="stat">
+            <span class={`stat-n ${s.tone}`}>{s.n}</span>
+            <span class="stat-l">{s.label}</span>
+          </div>
+        ))}
+      </section>
+
+      <section id="output" class="block">
+        <h2>Real output, real account</h2>
+        <p class="sub">
+          Not a mockup. This is a live run, cross-checked against local git on the actual commit
+          graphs — both instruments agree.
+        </p>
+
+        <div class="term" role="img" aria-label="Terminal output listing diverged and clean forks">
+          <div class="term-bar"><span></span><span></span><span></span><span class="term-title">fork-sentinel</span></div>
+          <pre><code set:html={termHtml} /></pre>
+        </div>
+      </section>
+
+      <section class="block">
+        <h2>What the statuses mean</h2>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Status</th><th>Meaning</th><th>Shown by default</th></tr></thead>
+            <tbody>
+              {statuses.map((s) => (
+                <tr>
+                  <td><code class={`tag ${s.tone}`}>{s.name}</code></td>
+                  <td>{s.desc}</td>
+                  <td><span class="shown">{s.shown}</span></td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <p class="sub">Rows sort riskiest first: diverged by how far behind, then clean, then the rest.</p>
+      </section>
+
+      <section id="findings" class="block">
+        <h2>Two things that are less obvious than they look</h2>
+        <div class="cards">
+          <article class="card">
+            <h3>Comparing default branches under-reports badly</h3>
+            <p>
+              A fork whose <code>main</code> tracks upstream while the work sits on feature branches
+              reports <strong>0 ahead</strong> — so an <code>ahead &gt; 0</code> filter then discards it,
+              hiding exactly the repo you are most active in.
+            </p>
+            <p>
+              This is not an edge case. It is the normal shape for anyone who forks in order to open
+              pull requests — every maintained fork on <code>--user sindresorhus</code> has its work on
+              a non-default branch. fork-sentinel scans the other branches when the default carries
+              nothing, keeps the one furthest ahead, and tells you which it used.
+            </p>
+          </article>
+
+          <article class="card">
+            <h3><code>parent !== null</code> is not proof the upstream exists</h3>
+            <p>
+              GitHub keeps reporting a <code>parent</code> long after that repository is deleted, and
+              the compare endpoint then answers a bare <code>404</code> — the same status it returns
+              when two histories share no commit, which means something completely different.
+            </p>
+            <p>
+              fork-sentinel reads the 404 body to separate them, and spends one extra request
+              confirming a dead upstream rather than filing both under a vague error. A failed run
+              must never read as a clean one.
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section id="install" class="block">
+        <h2>Install and use</h2>
+        <p class="sub">Requires <a href="https://bun.sh" rel="noopener">Bun</a> 1.0+. No setup step for auth.</p>
+
+        <div class="term plain">
+          <pre><code><span class="c-dim"># clone and run</span>
+git clone {repo}
+cd fork-sentinel && bun install
+bun run src/cli.ts
+
+<span class="c-dim"># the flags that matter</span>
+fork-sentinel                    <span class="c-dim">« maintained forks, riskiest first</span>
+fork-sentinel --all              <span class="c-dim">« include bookmarks and dead upstreams</span>
+fork-sentinel --json             <span class="c-dim">« machine-readable</span>
+fork-sentinel --user octocat     <span class="c-dim">« someone else's public forks</span>
+fork-sentinel --exit-code        <span class="c-dim">« exit 1 if anything diverged, for CI</span></code></pre>
+        </div>
+
+        <h3 class="h3-sep">Auth</h3>
+        <p>
+          Reads <code>GITHUB_TOKEN</code> or <code>GH_TOKEN</code>, and otherwise falls back to the{" "}
+          <a href="https://cli.github.com" rel="noopener">gh CLI</a>'s own token — already
+          authenticated on most developer machines. A token needs only <code>public_repo</code>, or{" "}
+          <code>repo</code> to include private forks.
+        </p>
+
+        <h3 class="h3-sep">Cost</h3>
+        <p>
+          One run over 69 forks takes about 15 seconds and roughly 200 requests against a 5,000/hour
+          limit. Outbound-PR lookups use the search API — a much tighter quota — so they run only for
+          maintained forks, never the whole list.
+        </p>
+      </section>
+
+      <section class="cta-band">
+        <h2>Stop finding out during the merge.</h2>
+        <a class="btn primary lg" href={repo} rel="noopener">Get fork-sentinel</a>
+      </section>
+    </main>
+
+    <footer>
+      <p>
+        <a href={repo} rel="noopener">Source</a> · MIT ·
+        built by <a href="https://github.com/juansilvadesign" rel="noopener">juansilvadesign</a> ·
+        <a href="mailto:contact@juansilva.design">contact@juansilva.design</a>
+      </p>
+      <p class="fine">Not affiliated with GitHub, Inc.</p>
+    </footer>
+
+    <script is:inline>
+      document.querySelectorAll("[data-copy]").forEach((btn) => {
+        btn.addEventListener("click", async () => {
+          try {
+            await navigator.clipboard.writeText(btn.dataset.copy);
+            const original = btn.textContent;
+            btn.textContent = "Copied";
+            setTimeout(() => (btn.textContent = original), 1400);
+          } catch {
+            /* clipboard blocked — the command is selectable anyway */
+          }
+        });
+      });
+    </script>
+  </body>
+</html>
+
+<style is:global>
+  :root {
+    --bg: #0a0c10;
+    --surface: #11151c;
+    --surface-2: #161b24;
+    --line: #222936;
+    --text: #e6e9ef;
+    --muted: #8b94a7;
+    --accent: #3fb950;
+    --danger: #f85149;
+    --amber: #d29922;
+    --link: #6cb6ff;
+    --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, Helvetica, Arial, sans-serif;
+  }
+
+  * { box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 16px;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+    background-image:
+      radial-gradient(60rem 30rem at 50% -10rem, rgba(63, 185, 80, 0.07), transparent 70%);
+  }
+
+  a { color: var(--link); text-decoration-color: rgba(108, 182, 255, 0.35); text-underline-offset: 3px; }
+  a:hover { text-decoration-color: currentColor; }
+
+  code { font-family: var(--mono); font-size: 0.9em; }
+
+  .skip {
+    position: absolute; left: -9999px; top: 0; background: var(--accent);
+    color: #04170a; padding: 0.6rem 1rem; z-index: 10; border-radius: 0 0 6px 0;
+  }
+  .skip:focus { left: 0; }
+
+  :focus-visible { outline: 2px solid var(--link); outline-offset: 2px; border-radius: 4px; }
+
+  /* ---------- nav ---------- */
+  .nav {
+    display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+    max-width: 1060px; margin: 0 auto; padding: 1.1rem 1.25rem;
+    border-bottom: 1px solid var(--line);
+    flex-wrap: wrap;
+  }
+  .brand { font-family: var(--mono); font-weight: 600; letter-spacing: -0.01em; }
+  .brand-mark { color: var(--accent); }
+  .nav nav { display: flex; align-items: center; gap: 1.25rem; flex-wrap: wrap; }
+  .nav nav a { color: var(--muted); text-decoration: none; font-size: 0.92rem; }
+  .nav nav a:hover { color: var(--text); }
+  .nav nav a.cta {
+    color: var(--text); border: 1px solid var(--line); padding: 0.35rem 0.8rem;
+    border-radius: 6px; background: var(--surface);
+  }
+  .nav nav a.cta:hover { border-color: var(--muted); }
+
+  /* ---------- layout ---------- */
+  main { max-width: 1060px; margin: 0 auto; padding: 0 1.25rem; }
+
+  .hero { padding: 4.5rem 0 3rem; max-width: 44rem; }
+  .eyebrow {
+    font-family: var(--mono); font-size: 0.78rem; letter-spacing: 0.06em;
+    text-transform: uppercase; color: var(--muted); margin: 0 0 1rem;
+  }
+  h1 {
+    font-size: clamp(2.1rem, 6vw, 3.4rem); line-height: 1.08; letter-spacing: -0.03em;
+    margin: 0 0 1.25rem; font-weight: 700;
+  }
+  h1 em { font-style: normal; color: var(--accent); }
+  .lede { color: #c3cad6; font-size: 1.08rem; margin: 0 0 1rem; }
+
+  .cmd {
+    display: flex; align-items: center; gap: 0.75rem; margin: 2rem 0 1.5rem;
+    background: var(--surface); border: 1px solid var(--line); border-radius: 8px;
+    padding: 0.75rem 0.75rem 0.75rem 1rem; overflow-x: auto;
+  }
+  .cmd code { color: var(--accent); white-space: nowrap; }
+  .copy {
+    margin-left: auto; flex: none; background: var(--surface-2); color: var(--muted);
+    border: 1px solid var(--line); border-radius: 5px; padding: 0.3rem 0.7rem;
+    font-size: 0.8rem; cursor: pointer; font-family: var(--sans);
+  }
+  .copy:hover { color: var(--text); border-color: var(--muted); }
+
+  .actions { display: flex; gap: 0.75rem; flex-wrap: wrap; }
+  .btn {
+    display: inline-block; padding: 0.6rem 1.15rem; border-radius: 7px;
+    border: 1px solid var(--line); background: var(--surface); color: var(--text);
+    text-decoration: none; font-size: 0.95rem; font-weight: 500;
+  }
+  .btn:hover { border-color: var(--muted); }
+  .btn.primary { background: var(--accent); color: #05200b; border-color: var(--accent); font-weight: 600; }
+  .btn.primary:hover { filter: brightness(1.08); }
+  .btn.lg { padding: 0.8rem 1.6rem; font-size: 1.02rem; }
+
+  /* ---------- stats ---------- */
+  .stats {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem;
+    padding: 1rem 0 3.5rem;
+  }
+  .stat {
+    background: var(--surface); border: 1px solid var(--line); border-radius: 10px;
+    padding: 1.4rem 1.25rem; display: flex; flex-direction: column; gap: 0.3rem;
+  }
+  .stat-n { font-family: var(--mono); font-size: 2.3rem; font-weight: 700; line-height: 1; }
+  .stat-n.muted { color: var(--muted); }
+  .stat-n.accent { color: var(--accent); }
+  .stat-n.danger { color: var(--danger); }
+  .stat-l { color: var(--muted); font-size: 0.92rem; }
+
+  /* ---------- blocks ---------- */
+  .block { padding: 3.25rem 0; border-top: 1px solid var(--line); }
+  .block h2 {
+    font-size: clamp(1.5rem, 3.4vw, 2rem); letter-spacing: -0.02em; margin: 0 0 0.6rem;
+  }
+  .sub { color: var(--muted); margin: 0 0 1.6rem; max-width: 48rem; }
+  .h3-sep { margin: 2rem 0 0.5rem; font-size: 1.05rem; }
+
+  /* ---------- terminal ---------- */
+  .term {
+    background: #070910; border: 1px solid var(--line); border-radius: 10px;
+    overflow: hidden; box-shadow: 0 18px 50px -22px rgba(0, 0, 0, 0.9);
+  }
+  .term-bar {
+    display: flex; align-items: center; gap: 0.45rem; padding: 0.7rem 0.9rem;
+    background: var(--surface-2); border-bottom: 1px solid var(--line);
+  }
+  .term-bar span:not(.term-title) {
+    width: 11px; height: 11px; border-radius: 50%; background: #2d3542; flex: none;
+  }
+  .term-title {
+    margin-left: 0.5rem; font-family: var(--mono); font-size: 0.78rem; color: var(--muted);
+  }
+  .term pre {
+    margin: 0; padding: 1.15rem 1.25rem; overflow-x: auto;
+    font-family: var(--mono); font-size: 0.8rem; line-height: 1.7; color: #c9d1d9;
+  }
+  .term.plain { background: var(--surface); }
+  .term.plain pre { font-size: 0.85rem; }
+  .c-dim { color: #6e7785; }
+  .c-bold { color: #fff; font-weight: 600; }
+  .c-red { color: var(--danger); }
+  .c-green { color: var(--accent); }
+
+  /* ---------- table ---------- */
+  .table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 10px; }
+  table { border-collapse: collapse; width: 100%; min-width: 34rem; }
+  th, td { text-align: left; padding: 0.8rem 1rem; border-bottom: 1px solid var(--line); }
+  thead th { background: var(--surface-2); font-size: 0.8rem; letter-spacing: 0.04em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
+  tbody tr:last-child td { border-bottom: 0; }
+  td { color: #c3cad6; font-size: 0.94rem; vertical-align: top; }
+  .tag { padding: 0.15rem 0.5rem; border-radius: 4px; background: var(--surface-2); border: 1px solid var(--line); white-space: nowrap; }
+  .tag.danger { color: var(--danger); }
+  .tag.accent { color: var(--accent); }
+  .tag.amber { color: var(--amber); }
+  .tag.muted { color: var(--muted); }
+  .shown { font-family: var(--mono); font-size: 0.82rem; color: var(--muted); white-space: nowrap; }
+
+  /* ---------- cards ---------- */
+  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.1rem; }
+  .card {
+    background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 1.5rem;
+  }
+  .card h3 { margin: 0 0 0.75rem; font-size: 1.08rem; letter-spacing: -0.01em; line-height: 1.35; }
+  .card p { color: #b9c1ce; margin: 0 0 0.85rem; font-size: 0.95rem; }
+  .card p:last-child { margin-bottom: 0; }
+  .card code { background: var(--surface-2); padding: 0.1rem 0.35rem; border-radius: 4px; color: var(--text); }
+
+  /* ---------- cta ---------- */
+  .cta-band {
+    text-align: center; padding: 4rem 1rem 4.5rem; border-top: 1px solid var(--line);
+  }
+  .cta-band h2 { font-size: clamp(1.4rem, 3.5vw, 2rem); margin: 0 0 1.5rem; letter-spacing: -0.02em; }
+
+  /* ---------- footer ---------- */
+  footer {
+    border-top: 1px solid var(--line); padding: 2rem 1.25rem 3rem; text-align: center;
+    color: var(--muted); font-size: 0.9rem;
+  }
+  footer p { margin: 0 0 0.4rem; }
+  .fine { font-size: 0.82rem; color: #5c6472; }
+
+  @media (max-width: 640px) {
+    .hero { padding: 3rem 0 2rem; }
+    .nav { padding: 0.9rem 1rem; }
+    .nav nav { gap: 0.9rem; }
+  }
+</style>
