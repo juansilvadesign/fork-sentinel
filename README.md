@@ -112,6 +112,11 @@ Detecting when an upstream commit touches a file **your fork patched** — the w
 tells you a conflict is coming before you merge. That needs the patched-file set per fork and
 is the planned next step.
 
+## Support
+
+Bug reports and feature requests: open an issue on this repository.
+Anything else: **contact@juansilva.design**
+
 ## Licence
 
 MIT
