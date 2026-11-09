@@ -1,0 +1,8 @@
+# fork-sentinel
+
+> A zero-dependency CLI that separates the forks carrying your own commits from the bookmark majority, then tells you when upstream moved underneath them.
+
+## Pages
+
+- [Home](https://juansilvadesign.github.io/fork-sentinel/): what it does and how to use it
+- [Source](https://github.com/juansilvadesign/fork-sentinel): repository
